@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="ლ → ₽">
+<title>ლ → ₽</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: #0e0e0e;
+    color: #f0ede8;
+    font-family: 'Courier New', monospace;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+  }
+  .wrap { width: 100%; max-width: 360px; }
+
+  .header { margin-bottom: 28px; }
+  .header .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .header h1 { font-size: 30px; letter-spacing: -0.02em; }
+
+  .rate-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    margin-bottom: 24px;
+  }
+  .rate-label { font-size: 11px; letter-spacing: 0.15em; color: #555; white-space: nowrap; }
+  .rate-value { flex: 1; font-size: 14px; }
+  .rate-value strong { color: #c9a96e; }
+  .btn-edit {
+    background: transparent;
+    color: #555;
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-family: inherit;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+  }
+  .rate-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #c9a96e;
+    color: #c9a96e;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    padding: 2px 4px;
+    width: 60px;
+  }
+  .btn-ok {
+    background: #c9a96e;
+    color: #0e0e0e;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .fields { display: flex; flex-direction: column; gap: 0; margin-bottom: 20px; }
+  .field {
+    background: #141414;
+    border: 1px solid #222;
+    padding: 14px 16px;
+  }
+  .field:first-child { border-radius: 10px 10px 0 0; }
+  .field:last-child { border-radius: 0 0 10px 10px; border-top: none; }
+  .field-label { font-size: 10px; color: #444; letter-spacing: 0.15em; margin-bottom: 6px; }
+  .field input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #2a2a2a;
+    color: #f0ede8;
+    font-size: 28px;
+    font-family: inherit;
+    width: 100%;
+    outline: none;
+    padding: 4px 0;
+  }
+  .field input:focus { border-bottom-color: #c9a96e; }
+  .field.rub input:focus { border-bottom-color: #7a9e7e; }
+  .divider { text-align: center; color: #2a2a2a; font-size: 20px; padding: 4px 0; }
+
+  .quick-label { font-size: 10px; color: #444; letter-spacing: 0.15em; margin-bottom: 10px; }
+  .quick-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+  .quick-btn {
+    background: transparent;
+    color: #555;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .quick-btn.active { background: #1e1e1e; color: #c9a96e; border-color: #c9a96e; }
+
+  .result-box {
+    padding: 14px 16px;
+    background: #141414;
+    border: 1px solid #222;
+    border-radius: 8px;
+    display: none;
+  }
+  .result-box.visible { display: block; }
+  .result-main { font-size: 15px; margin-bottom: 4px; }
+  .result-main .gel { color: #f0ede8; }
+  .result-main .rub { color: #7a9e7e; font-weight: bold; }
+  .result-hint { font-size: 11px; color: #3a3a3a; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="eyebrow">конвертер</div>
+    <h1>ლ → ₽</h1>
+  </div>
+
+  <div class="rate-box" id="rateBox">
+    <span class="rate-label">КУРС</span>
+    <span class="rate-value" id="rateDisplay">1 ლ = <strong id="rateNum">27</strong> ₽</span>
+    <button class="btn-edit" onclick="startEditRate()">изменить</button>
+  </div>
+
+  <div class="fields">
+    <div class="field">
+      <div class="field-label">ЛАРИ  ლ</div>
+      <input type="number" id="gelInput" inputmode="decimal" placeholder="0" oninput="fromGel()">
+    </div>
+    <div class="divider">⇅</div>
+    <div class="field rub">
+      <div class="field-label">РУБЛИ  ₽</div>
+      <input type="number" id="rubInput" inputmode="decimal" placeholder="0" oninput="fromRub()">
+    </div>
+  </div>
+
+  <div class="quick-label">БЫСТРО</div>
+  <div class="quick-btns">
+    <button class="quick-btn" onclick="setGel(5)">5 ლ</button>
+    <button class="quick-btn" onclick="setGel(10)">10 ლ</button>
+    <button class="quick-btn" onclick="setGel(20)">20 ლ</button>
+    <button class="quick-btn" onclick="setGel(50)">50 ლ</button>
+    <button class="quick-btn" onclick="setGel(100)">100 ლ</button>
+  </div>
+
+  <div class="result-box" id="resultBox">
+    <div class="result-main">
+      <span class="gel" id="resGel"></span> = <span class="rub" id="resRub"></span>
+    </div>
+    <div class="result-hint" id="resHint"></div>
+  </div>
+</div>
+
+<script>
+let rate = parseFloat(localStorage.getItem('gelRate') || '27');
+document.getElementById('rateNum').textContent = rate;
+
+function fromGel() {
+  const g = parseFloat(document.getElementById('gelInput').value);
+  if (isNaN(g)) { document.getElementById('rubInput').value = ''; hideResult(); return; }
+  const r = (g * rate).toFixed(0);
+  document.getElementById('rubInput').value = r;
+  showResult(g, r);
+  highlightQuick(g);
+}
+
+function fromRub() {
+  const r = parseFloat(document.getElementById('rubInput').value);
+  if (isNaN(r)) { document.getElementById('gelInput').value = ''; hideResult(); return; }
+  const g = (r / rate).toFixed(2);
+  document.getElementById('gelInput').value = g;
+  showResult(g, r);
+  highlightQuick(parseFloat(g));
+}
+
+function setGel(n) {
+  document.getElementById('gelInput').value = n;
+  fromGel();
+}
+
+function showResult(g, r) {
+  const box = document.getElementById('resultBox');
+  box.classList.add('visible');
+  document.getElementById('resGel').textContent = g + ' ლ';
+  document.getElementById('resRub').textContent = r + ' ₽';
+  const mental = Math.round(parseFloat(g) * 30 * 0.9);
+  document.getElementById('resHint').textContent = 'в уме: ×30 − 10% ≈ ' + mental + ' ₽';
+}
+
+function hideResult() {
+  document.getElementById('resultBox').classList.remove('visible');
+}
+
+function highlightQuick(g) {
+  document.querySelectorAll('.quick-btn').forEach(btn => btn.classList.remove('active'));
+  const map = { 5: 0, 10: 1, 20: 2, 50: 3, 100: 4 };
+  if (g in map) document.querySelectorAll('.quick-btn')[map[g]].classList.add('active');
+}
+
+function startEditRate() {
+  const box = document.getElementById('rateBox');
+  box.innerHTML = `
+    <span class="rate-label">КУРС</span>
+    <input class="rate-input" id="rateEditInput" type="number" inputmode="decimal" value="${rate}" autofocus>
+    <button class="btn-ok" onclick="applyRate()">ок</button>
+  `;
+  document.getElementById('rateEditInput').addEventListener('keydown', e => { if (e.key === 'Enter') applyRate(); });
+}
+
+function applyRate() {
+  const val = parseFloat(document.getElementById('rateEditInput').value);
+  if (!isNaN(val) && val > 0) {
+    rate = val;
+    localStorage.setItem('gelRate', rate);
+  }
+  document.getElementById('rateBox').innerHTML = `
+    <span class="rate-label">КУРС</span>
+    <span class="rate-value">1 ლ = <strong id="rateNum">${rate}</strong> ₽</span>
+    <button class="btn-edit" onclick="startEditRate()">изменить</button>
+  `;
+  fromGel();
+}
+</script>
+</body>
+</html>
